@@ -3,7 +3,7 @@ package service
 import (
 	"account-system/internal/model"
 	"account-system/internal/repository"
-	"account-system/pkg"
+	"account-system/pkg/idgen"
 	"errors"
 
 	"github.com/shopspring/decimal"
@@ -38,7 +38,7 @@ func Transfer(
 		return nil, ErrSameAccount
 	}
 	if transferNo == "" {
-		transferNo = pkg.GenerateNo("TR_")
+		transferNo = idgen.GenerateNo("TR_")
 	}
 
 	// 2. 幂等检查(事务外,快速失败)
@@ -148,7 +148,7 @@ func Transfer(
 
 		// 11. 记两条流水
 		fromTxn := &model.AccountTransaction{
-			TxnNo:         pkg.GenerateNo("TXN_"),
+			TxnNo:         idgen.GenerateNo("TXN_"),
 			AccountID:     from.ID,
 			UserID:        from.UserID,
 			BizType:       5, // 5 = 转出
@@ -164,7 +164,7 @@ func Transfer(
 		}
 
 		toTxn := &model.AccountTransaction{
-			TxnNo:         pkg.GenerateNo("TXN_"),
+			TxnNo:         idgen.GenerateNo("TXN_"),
 			AccountID:     to.ID,
 			UserID:        to.UserID,
 			BizType:       6, // 6 = 转入

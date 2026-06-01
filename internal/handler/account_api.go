@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"account-system/internal/service"
@@ -83,7 +83,7 @@ type ConfirmDepositRequest struct {
 	OrderNo string `json:"order_no" binding:"required"`
 }
 
-func ConfirmDepositApi(c *gin.Context) {
+func ConfirmDepositHandler(c *gin.Context) {
 	var req ConfirmDepositRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "参数错误" + err.Error()})
@@ -110,7 +110,7 @@ type CreateWithDrawRequest struct {
 	PayeeBank    string `json:"payee_bank" `
 }
 
-func CreateWithDrawApi(c *gin.Context) {
+func CreateWithDrawHandler(c *gin.Context) {
 	var req CreateWithDrawRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "参数错误" + err.Error()})

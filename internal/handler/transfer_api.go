@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"account-system/internal/service"
@@ -18,7 +18,7 @@ type TransferRequest struct {
 	Remark     string `json:"remark"`
 }
 
-func TransferApi(c *gin.Context) {
+func TransferHandler(c *gin.Context) {
 	var req TransferRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "参数错误: " + err.Error()})

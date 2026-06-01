@@ -3,7 +3,7 @@ package service
 import (
 	"account-system/internal/model"
 	"account-system/internal/repository"
-	"account-system/pkg"
+	"account-system/pkg/idgen"
 	"errors"
 
 	"github.com/shopspring/decimal"
@@ -27,7 +27,7 @@ func CreateDepositOrder(userID uint, currency string, amount decimal.Decimal) (*
 	}
 
 	order := &model.DepositOrder{
-		OrderNo:   pkg.GenerateNo("DEP_"),
+		OrderNo:   idgen.GenerateNo("DEP_"),
 		UserID:    userID,
 		AccountID: account.ID, // 关联到刚查到的账户
 		Currency:  currency,

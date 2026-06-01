@@ -3,7 +3,7 @@ package service
 import (
 	"account-system/internal/model"
 	"account-system/internal/repository"
-	"account-system/pkg"
+	"account-system/pkg/idgen"
 	"errors"
 
 	"github.com/shopspring/decimal"
@@ -31,7 +31,7 @@ func CreateAccount(userID uint, currency string) (*model.Account, error) {
 	account := &model.Account{
 		UserID:           userID,
 		Currency:         currency,
-		AccountNo:        pkg.GenerateNo("ACC_"),
+		AccountNo:        idgen.GenerateNo("ACC_"),
 		AvailableBalance: decimal.Zero,
 		FrozenBalance:    decimal.Zero,
 		Status:           1,
@@ -102,7 +102,7 @@ func ConfirmDeposit(orderNo string) error {
 			return err
 		}
 		txn := &model.AccountTransaction{
-			TxnNo:         pkg.GenerateNo("TXN_"),
+			TxnNo:         idgen.GenerateNo("TXN_"),
 			AccountID:     order.AccountID,
 			UserID:        order.UserID,
 			BizType:       1,
@@ -140,7 +140,7 @@ func CreateWithdrawOrder(userID uint, currency string, amount decimal.Decimal, p
 	balanceBefore := account.AvailableBalance
 	balanceAfter := balanceBefore.Sub(amount)
 	withdraworder := &model.WithdrawOrder{
-		OrderNo:      pkg.GenerateNo("WD_"),
+		OrderNo:      idgen.GenerateNo("WD_"),
 		UserID:       userID,
 		AccountID:    account.ID,
 		Currency:     currency,
@@ -173,7 +173,7 @@ func CreateWithdrawOrder(userID uint, currency string, amount decimal.Decimal, p
 			return err
 		}
 		txn := &model.AccountTransaction{
-			TxnNo:         pkg.GenerateNo("TXN_"),
+			TxnNo:         idgen.GenerateNo("TXN_"),
 			AccountID:     account.ID,
 			UserID:        account.UserID,
 			BizType:       2, // 2 = 提现冻结
@@ -264,7 +264,7 @@ func ConfirmWithdraw(orderNo string, success bool, failReason string) error {
 			// 真正变的是 frozen,但我们的流水设计追踪 available。
 			// 这是学习版的简化——生产环境会同时追踪 available 和 frozen 的变动。
 			txn := &model.AccountTransaction{
-				TxnNo:         pkg.GenerateNo("TXN_"),
+				TxnNo:         idgen.GenerateNo("TXN_"),
 				AccountID:     account.ID,
 				UserID:        account.UserID,
 				BizType:       4, // 4 = 提现出账
@@ -297,7 +297,7 @@ func ConfirmWithdraw(orderNo string, success bool, failReason string) error {
 
 			// 记一条"退回流水":BizType=3 提现退回,Direction=1 收入(可用余额增加)
 			txn := &model.AccountTransaction{
-				TxnNo:         pkg.GenerateNo("TXN_"),
+				TxnNo:         idgen.GenerateNo("TXN_"),
 				AccountID:     account.ID,
 				UserID:        account.UserID,
 				BizType:       3, // 3 = 提现退回

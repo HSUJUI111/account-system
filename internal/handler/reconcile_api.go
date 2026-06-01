@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"account-system/internal/service"
@@ -14,7 +14,7 @@ type ReconcileSingleResponse struct {
 	Data *service.ReconcileResult `json:"data"`
 }
 
-func ReconcileAccountApi(c *gin.Context) {
+func ReconcileAccountHandler(c *gin.Context) {
 	accountIDStr := c.Param("id")
 	accountID, err := strconv.ParseUint(accountIDStr, 10, 64)
 	if err != nil {
@@ -35,7 +35,7 @@ func ReconcileAccountApi(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"code": 200, "msg": msg, "data": res})
 }
 
-func ReconcileAllApi(c *gin.Context) {
+func ReconcileAllHandler(c *gin.Context) {
 	inconsistent, err := service.ReconcileAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "msg": "对账失败: " + err.Error()})

@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"account-system/internal/service"
@@ -15,7 +15,7 @@ type DepositOrderRequest struct {
 	Amount   string `json:"amount"  binding:"required"`
 }
 
-func CreateDepositApi(c *gin.Context) {
+func CreateDepositHandler(c *gin.Context) {
 	var req DepositOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
