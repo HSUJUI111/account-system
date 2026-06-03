@@ -1,0 +1,5 @@
+account-system          # 本地编译的二进制
+*.log
+.DS_Store
+.vscode/
+.idea/

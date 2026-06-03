@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -30,8 +31,12 @@ type JWTConfig struct {
 
 func Load(path string) (*Config, error) {
 	v := viper.New()
-	v.SetConfigFile(path)
+	v.SetConfigName("config")
 	v.SetConfigType("yaml")
+	v.AddConfigPath("./config")
+	v.AddConfigPath(".")
+	v.AutomaticEnv()
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	if err := v.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("读取配置文件失败: %w", err)
 	}
