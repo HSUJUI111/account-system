@@ -10,7 +10,7 @@
 
 依赖:`Docker` 和 `Docker Compose`,无需本地安装 MySQL / Redis / Go。
 
-\`\`\`bash
+```bash
 git clone https://github.com/HSUJUI111/account-system.git
 cd account-system
 docker-compose up -d --build
@@ -19,18 +19,18 @@ docker-compose up -d --build
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"alice","email":"alice@example.com","password":"123456"}'
-\`\`\`
+```
 
 完全重置(删数据):
-\`\`\`bash
+```bash
 docker-compose down -v
-\`\`\`
+```
 
 ---
 
 ## 项目结构
 
-\`\`\`
+```
 account-system/
 ├── cmd/main.go                     # 入口
 ├── config/                         # 配置加载(支持环境变量覆盖)
@@ -43,7 +43,7 @@ account-system/
 ├── pkg/idgen/                      # 雪花 ID 生成
 ├── Dockerfile
 └── docker-compose.yml
-\`\`\`
+```
 
 ---
 
@@ -82,11 +82,11 @@ account-system/
 
 ### CAS 状态机:用一条带条件的 UPDATE 实现幂等
 
-\`\`\`sql
+```sql
 UPDATE deposit_order
 SET status = 2, ...
 WHERE order_no = ? AND status = 1;
-\`\`\`
+```
 
 支付回调重复到达时,第二次 `RowsAffected = 0`,直接当成功返回,不重复加钱。这是用"数据库行锁的原子性"代替"应用层 mutex 或分布式锁"——单条 UPDATE 即可同时完成"比较状态"和"切换状态",并发安全且零开销。
 
