@@ -17,5 +17,9 @@ func SetupRouter() *gin.Engine {
 	r.POST("/api/transfer", TransferHandler)
 	r.GET("/api/reconcile/account/:id", ReconcileAccountHandler)
 	r.GET("/api/reconcile/all", ReconcileAllHandler)
+	r.POST("/api/auth/register", RegisterHandler)
+	r.POST("/api/auth/login", LoginHandler)
+	r.POST("/api/auth/refresh", RefreshHandler)
+	r.POST("/api/auth/logout", LogoutHandler)
 	return r
 }

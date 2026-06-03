@@ -8,12 +8,24 @@ import (
 
 type Config struct {
 	Mysql MysqlConfig `mapstructure:"MySQL"`
+	Redis RedisConfig `mapstructure:"Redis"`
+	Jwt   JWTConfig   `mapstructure:"Jwt"`
 }
 
 type MysqlConfig struct {
 	DSN          string `mapstructure:"dsn"`
 	MaxIdleConns int    `mapstructure:"max_idle_conns"`
 	MaxOpenConns int    `mapstructure:"max_open_conns"`
+}
+type RedisConfig struct {
+	Addr     string
+	Password string
+	DB       int
+}
+type JWTConfig struct {
+	Secret                string
+	AccessTokenTTLMinutes int `mapstructure:"access_token_ttl_minutes"`
+	RefreshTokenTTLHours  int `mapstructure:"refresh_token_ttl_hours"`
 }
 
 func Load(path string) (*Config, error) {

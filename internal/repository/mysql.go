@@ -12,7 +12,9 @@ import (
 var DB *gorm.DB
 
 func InitDB(cfg config.MysqlConfig) {
-	db, err := gorm.Open(mysql.Open(cfg.DSN), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(cfg.DSN), &gorm.Config{
+		TranslateError: true,
+	})
 
 	if err != nil {
 		log.Fatalf("连接数据库失败: %v", err)
@@ -22,7 +24,7 @@ func InitDB(cfg config.MysqlConfig) {
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
 	sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
 
-	err = db.AutoMigrate(model.Account{}, model.DepositOrder{}, model.AccountTransaction{}, &model.TransferOrder{}, model.WithdrawOrder{}, model.ReconcileAlert{})
+	err = db.AutoMigrate(model.Account{}, model.DepositOrder{}, model.AccountTransaction{}, &model.TransferOrder{}, model.WithdrawOrder{}, model.ReconcileAlert{}, model.User{})
 	if err != nil {
 		log.Fatalf("自动建表失败: %v", err)
 	}

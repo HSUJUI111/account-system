@@ -2,3 +2,13 @@ MySQL:
   DSN: "root:12345678@tcp(localhost:3306)/account_db?charset=utf8mb4&parseTime=True&loc=Local"
   max_idle_conns: 10
   max_open_conns: 100
+
+Redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+Jwt:
+  secret: "your-256-bit-secret-please-change-in-production"
+  access_token_ttl_minutes: 30
+  refresh_token_ttl_hours: 168    # 7 天
