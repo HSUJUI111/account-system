@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"account-system/internal/middleware"
 	"account-system/internal/service"
 	"errors"
 	"net/http"
@@ -10,11 +11,10 @@ import (
 )
 
 type AccountRequest struct {
-	UserID   uint   `json:"user_id" form:"user_id" binding:"required"`
 	Currency string `json:"currency" form:"currency" binding:"required"`
 }
 
-func CreateAccount(c *gin.Context) {
+func CreateAccountHandler(c *gin.Context) {
 	// 创建账户
 	var req AccountRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -24,7 +24,8 @@ func CreateAccount(c *gin.Context) {
 		})
 		return
 	}
-	account, err := service.CreateAccount(req.UserID, req.Currency)
+	userID := c.GetUint(middleware.CtxUserID)
+	account, err := service.CreateAccount(userID, req.Currency)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrAccountExists):
@@ -48,7 +49,7 @@ func CreateAccount(c *gin.Context) {
 }
 
 // 查账户
-func GetAccount(c *gin.Context) {
+func GetAccountHandler(c *gin.Context) {
 	var req AccountRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -57,7 +58,8 @@ func GetAccount(c *gin.Context) {
 		})
 		return
 	}
-	account, err := service.GetAccount(req.UserID, req.Currency)
+	userID := c.GetUint(middleware.CtxUserID)
+	account, err := service.GetAccount(userID, req.Currency)
 	if err != nil {
 		if errors.Is(err, service.ErrAccountNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -102,7 +104,6 @@ func ConfirmDepositHandler(c *gin.Context) {
 }
 
 type CreateWithDrawRequest struct {
-	UserID       uint   `json:"user_id" binding:"required"`
 	Currency     string `json:"currency" binding:"required"`
 	Amount       string `json:"amount" binding:"required"`
 	PayeeAccount string `json:"payee_account" binding:"required"`
@@ -110,7 +111,7 @@ type CreateWithDrawRequest struct {
 	PayeeBank    string `json:"payee_bank" `
 }
 
-func CreateWithDrawHandler(c *gin.Context) {
+func CreateWithdrawHandler(c *gin.Context) {
 	var req CreateWithDrawRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "msg": "参数错误" + err.Error()})
@@ -123,8 +124,9 @@ func CreateWithDrawHandler(c *gin.Context) {
 			"msg":  "金额格式错误",
 		})
 	}
+	userID := c.GetUint(middleware.CtxUserID)
 	order, err := service.CreateWithdrawOrder(
-		req.UserID, req.Currency, amount, req.PayeeAccount, req.PayeeName, req.PayeeBank,
+		userID, req.Currency, amount, req.PayeeAccount, req.PayeeName, req.PayeeBank,
 	)
 	if err != nil {
 		switch {

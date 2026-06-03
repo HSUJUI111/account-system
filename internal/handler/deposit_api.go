@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"account-system/internal/middleware"
 	"account-system/internal/service"
 	"errors"
 	"net/http"
@@ -10,7 +11,6 @@ import (
 )
 
 type DepositOrderRequest struct {
-	UserID   uint   `json:"user_id"  binding:"required"`
 	Currency string `json:"currency"  binding:"required"`
 	Amount   string `json:"amount"  binding:"required"`
 }
@@ -32,7 +32,8 @@ func CreateDepositHandler(c *gin.Context) {
 		})
 		return
 	}
-	order, err := service.CreateDepositOrder(req.UserID, req.Currency, amount)
+	userID := c.GetUint(middleware.CtxUserID)
+	order, err := service.CreateDepositOrder(userID, req.Currency, amount)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidAmount):
